@@ -5,9 +5,9 @@ import cocos.euclid as eu
 
 class Invaders(object):
     def __init__(self, layer, resources):
-        self.sprites = self.init_sprites(layer, resources)
         self.sprite_width = 32
-        self.sprite_spacing = 5
+        self.sprite_spacing = 32
+        self.sprites = self.init_sprites(layer, resources)
         self.max_left = 0 + (self.sprite_width / 2)
         self.max_right = layer.width + (self.sprite_width / 2) + self.sprite_spacing
 
@@ -65,8 +65,8 @@ class Invaders(object):
     def init_sprites(self, layer, resources):
         result = [ [], [], [], [], [] ]
         start_position = (50, layer.height-100)
-        width_inc = 32 + 5
-        height_inc = 32 + 5
+        width_inc = 32 + self.sprite_spacing
+        height_inc = 32 + 15
 
         for y in range(5):
             for x in range(11):
@@ -87,15 +87,16 @@ class Invader(cocos.sprite.Sprite):
         self.direction = "RIGHT"
         self.cshape = None
         self.set_cshape()
+        self.speed = 20
 
     def set_cshape(self):
         self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 10)
 
     def move(self, dt, right_limit, left_limit):
         if self.direction == "RIGHT":
-                self.move_right(dt*30, right_limit)
+                self.move_right(dt*self.speed, right_limit)
         elif self.direction == "LEFT":
-                self.move_left(dt*30, left_limit)
+                self.move_left(dt*self.speed, left_limit)
 
     def move_down(self, distance, next_direction):
         new_y = self.y - distance
