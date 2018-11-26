@@ -4,6 +4,7 @@ from invaders.input.joystick import JoyStick
 from invaders.sprites.missile import Missile
 from invaders.sprites.player import Player
 from invaders.sprites.invaders import Invaders
+from invaders.managers.enemy_attack_manager import EnemyAttackManager
 
 
 class Main_Scene(cocos.scene.Scene):
@@ -25,9 +26,12 @@ class Main_Layer(cocos.layer.Layer):
         self.joystick = JoyStick(self)
         self.schedule(self.loop)
 
+        self.enemy_attack_manager = EnemyAttackManager()
+
     def loop(self, dt, *args, **kwargs):
         missile = self.get_missile()
         self.invaders.move_sprites(dt, missile)
+        self.enemy_attack_manager.update_attack(self, self.player, self.invaders, self.resources)
 
     def is_missile_live(self):
         return "missile" in self.children_names
@@ -42,7 +46,7 @@ class Main_Layer(cocos.layer.Layer):
                 missile = None
         return missile
 
-    def fire_missile(self):
+    def fire_player_missile(self):
         if not self.is_missile_live():
             missile = Missile(self.width, self.height, self.resources)
             self.add(missile, name="missile")
@@ -54,4 +58,4 @@ class Main_Layer(cocos.layer.Layer):
 
     def on_joybutton_press(self, joystick, button):
         if button == 0 or button == 1:
-            self.fire_missile()
+            self.fire_player_missile()

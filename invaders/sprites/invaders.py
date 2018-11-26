@@ -7,19 +7,22 @@ class Invaders(object):
     def __init__(self, layer, resources):
         self.sprite_width = 32
         self.sprite_spacing = 32
+        self.columns = 11
+        self.rows = 5
         self.sprites = self.init_sprites(layer, resources)
         self.max_left = 0 + (self.sprite_width / 2)
         self.max_right = layer.width + (self.sprite_width / 2) + self.sprite_spacing
 
     def move_sprites(self, dt, missile):
+        sprite_speed = self.get_speed()
         next_sprite_dist = self.sprite_width + self.sprite_spacing
 
-        for y in range(5):
+        for y in range(self.rows):
             left_limit = self.max_left
             right_x_offset = self.get_right_x_offset() + 1
             right_limit = self.max_right - (right_x_offset * next_sprite_dist)
-            for x in range(11):
-                self.sprites[y][x].move(dt, right_limit, left_limit)
+            for x in range(self.columns):
+                self.sprites[y][x].move(dt, right_limit, left_limit, sprite_speed)
 
                 if missile is not None and \
                    missile.visible and \
@@ -38,7 +41,7 @@ class Invaders(object):
 
     def get_right_x_offset(self):
         result = 10
-        for x in range(10, -1, -1):
+        for x in range(self.columns-1, -1, -1):
             if self.sprites[0][x].visible == False and \
                self.sprites[1][x].visible == False and \
                self.sprites[2][x].visible == False and \
@@ -51,7 +54,7 @@ class Invaders(object):
 
     def get_left_x_offset(self):
         result = -1
-        for x in range(11):
+        for x in range(self.columns):
             if self.sprites[0][x].visible == False and \
                self.sprites[1][x].visible == False and \
                self.sprites[2][x].visible == False and \
@@ -68,8 +71,8 @@ class Invaders(object):
         width_inc = 32 + self.sprite_spacing
         height_inc = 32 + 15
 
-        for y in range(5):
-            for x in range(11):
+        for y in range(self.rows):
+            for x in range(self.columns):
                 invader = Invader(resources, start_position)
                 result[y].append(invader)
                 layer.add(invader)
@@ -77,6 +80,24 @@ class Invaders(object):
             start_position = (50, start_position[1]-height_inc)
 
         return result
+
+    def get_speed(self):
+        speed = 20
+        sprites_remaining = self.get_sprites_remaining()
+        if sprites_remaining <= 2:
+            speed = 400
+        elif sprites_remaining <= 9:
+            speed = 150
+        return speed
+
+    def get_sprites_remaining(self):
+        result = 0
+        for row in range(self.rows):
+            for column in range(self.columns):
+                if self.sprites[row][column].visible == True:
+                    result = result + 1
+        return result
+
 
 
 class Invader(cocos.sprite.Sprite):
@@ -87,16 +108,16 @@ class Invader(cocos.sprite.Sprite):
         self.direction = "RIGHT"
         self.cshape = None
         self.set_cshape()
-        self.speed = 20
+        #self.speed = 20
 
     def set_cshape(self):
         self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 10)
 
-    def move(self, dt, right_limit, left_limit):
+    def move(self, dt, right_limit, left_limit, speed):
         if self.direction == "RIGHT":
-                self.move_right(dt*self.speed, right_limit)
+                self.move_right(dt*speed, right_limit)
         elif self.direction == "LEFT":
-                self.move_left(dt*self.speed, left_limit)
+                self.move_left(dt*speed, left_limit)
 
     def move_down(self, distance, next_direction):
         new_y = self.y - distance
