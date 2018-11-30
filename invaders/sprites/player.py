@@ -3,8 +3,8 @@ from cocos.actions import *
 
 
 class Player(cocos.sprite.Sprite):
-    def __init__(self, layer_dimensions, resources):
-        super(Player, self).__init__(resources.player)
+    def __init__(self, layer_dimensions, player_image):
+        super(Player, self).__init__(player_image)
         self.layer_width = layer_dimensions[0]
         self.layer_height = layer_dimensions[1]
 

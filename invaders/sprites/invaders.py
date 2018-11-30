@@ -4,16 +4,16 @@ import cocos.euclid as eu
 
 
 class Invaders(object):
-    def __init__(self, layer, resources):
+    def __init__(self, layer, animated_invader):
         self.sprite_width = 32
         self.sprite_spacing = 32
         self.columns = 11
         self.rows = 5
-        self.sprites = self.init_sprites(layer, resources)
+        self.sprites = self.init_sprites(layer, animated_invader)
         self.max_left = 0 + (self.sprite_width / 2)
         self.max_right = layer.width + (self.sprite_width / 2) + self.sprite_spacing
 
-    def move_sprites(self, dt, missile):
+    def move_sprites(self, dt, player_attack_manager, layer):
         sprite_speed = self.get_speed()
         next_sprite_dist = self.sprite_width + self.sprite_spacing
 
@@ -24,14 +24,7 @@ class Invaders(object):
             for x in range(self.columns):
                 self.sprites[y][x].move(dt, right_limit, left_limit, sprite_speed)
 
-                if missile is not None and \
-                   missile.visible and \
-                   self.sprites[y][x].visible:
-                    self.sprites[y][x].set_cshape()
-                    if missile.cshape.overlaps(self.sprites[y][x].cshape):
-                        self.sprites[y][x].visible = False
-                        missile.visible = False
-                        missile.parent.remove("missile")
+                player_attack_manager.update_attack(layer, self.sprites[y][x])
 
                 left_x_offset = self.get_left_x_offset()
                 left_limit = self.max_left + ((x-left_x_offset) * next_sprite_dist)
@@ -65,7 +58,7 @@ class Invaders(object):
                 break
         return result
 
-    def init_sprites(self, layer, resources):
+    def init_sprites(self, layer, animated_invader):
         result = [ [], [], [], [], [] ]
         start_position = (50, layer.height-100)
         width_inc = 32 + self.sprite_spacing
@@ -73,7 +66,7 @@ class Invaders(object):
 
         for y in range(self.rows):
             for x in range(self.columns):
-                invader = Invader(resources, start_position)
+                invader = Invader(animated_invader, start_position)
                 result[y].append(invader)
                 layer.add(invader)
                 start_position = (start_position[0]+width_inc, start_position[1])
@@ -101,8 +94,8 @@ class Invaders(object):
 
 
 class Invader(cocos.sprite.Sprite):
-    def __init__(self, resources, start_position):
-        super(Invader, self).__init__(resources.animated_invader)
+    def __init__(self, animated_invader, start_position):
+        super(Invader, self).__init__(animated_invader)
         self.x = self.width / 2 + start_position[0]
         self.y = self.height / 2 + start_position[1]
         self.direction = "RIGHT"

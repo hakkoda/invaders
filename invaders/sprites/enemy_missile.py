@@ -5,8 +5,8 @@ import cocos.euclid as eu
 
 
 class EnemyMissile(cocos.sprite.Sprite):
-    def __init__(self, layer_width, layer_height, resources):
-        super(EnemyMissile, self).__init__(resources.missile)
+    def __init__(self, layer_width, layer_height, missile_image):
+        super(EnemyMissile, self).__init__(missile_image)
         self.speed = -200
         self.velocity = 0, 0
         self.do(BoundedMove(layer_width, layer_height+self.height))

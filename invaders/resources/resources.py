@@ -3,7 +3,6 @@ import pyglet
 
 class Resources(object):
     def __init__(self):
-        #pyglet.resource.path = ["invaders/resources/img"]
         pyglet.resource.path = ["@invaders.resources.img"]
         pyglet.resource.reindex()
         self.animated_invader = self.get_animated_invader()

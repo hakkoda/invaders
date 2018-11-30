@@ -1,10 +1,9 @@
 import cocos
 from invaders.resources.resources import Resources
 from invaders.input.joystick import JoyStick
-from invaders.sprites.missile import Missile
-from invaders.sprites.player import Player
-from invaders.sprites.invaders import Invaders
 from invaders.managers.enemy_attack_manager import EnemyAttackManager
+from invaders.managers.player_attack_manager import PlayerAttackManager
+from invaders.managers.sprite_manager import SpriteManager
 
 
 class Main_Scene(cocos.scene.Scene):
@@ -19,38 +18,21 @@ class Main_Layer(cocos.layer.Layer):
         super(Main_Layer, self).__init__()
         self.width = self.anchor[0] * 2
         self.height = self.anchor[1] * 2
-        self.resources = Resources()
-        self.invaders = Invaders(self, self.resources)
-        self.player = Player( (self.width, self.height), self.resources )
-        self.add(self.player)
         self.joystick = JoyStick(self)
+
+        self.resources = Resources()
+        self.sprite_manager = SpriteManager(self.resources)
+        self.enemy_attack_manager = EnemyAttackManager(self.sprite_manager)
+        self.player_attack_manager = PlayerAttackManager(self.sprite_manager)
+
+        self.invaders = self.sprite_manager.create_invaders(self)
+        self.player = self.sprite_manager.create_player(self.width, self.height)
+        self.add(self.player)
         self.schedule(self.loop)
 
-        self.enemy_attack_manager = EnemyAttackManager()
-
     def loop(self, dt, *args, **kwargs):
-        missile = self.get_missile()
-        self.invaders.move_sprites(dt, missile)
-        self.enemy_attack_manager.update_attack(self, self.player, self.invaders, self.resources)
-
-    def is_missile_live(self):
-        return "missile" in self.children_names
-
-    def get_missile(self):
-        missile = None
-        if self.is_missile_live():
-            missile = self.get("missile")
-            missile.set_cshape()
-            if missile.y > self.height:
-                self.remove("missile")
-                missile = None
-        return missile
-
-    def fire_player_missile(self):
-        if not self.is_missile_live():
-            missile = Missile(self.width, self.height, self.resources)
-            self.add(missile, name="missile")
-            missile.fire((self.player.x, self.player.y))
+        self.invaders.move_sprites(dt, self.player_attack_manager, self)
+        self.enemy_attack_manager.update_attack(self, self.player, self.invaders)
 
     def on_joyaxis_motion(self, joystick, axis, value):
         if axis == "x":
@@ -58,4 +40,4 @@ class Main_Layer(cocos.layer.Layer):
 
     def on_joybutton_press(self, joystick, button):
         if button == 0 or button == 1:
-            self.fire_player_missile()
+            self.player_attack_manager.fire_player_missile(self, self.player)

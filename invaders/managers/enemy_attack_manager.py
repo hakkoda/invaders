@@ -1,21 +1,20 @@
 import random
-from invaders.sprites.enemy_missile import EnemyMissile
 
 
 class EnemyAttackManager(object):
-    def __init__(self):
-        pass
+    def __init__(self, sprite_manager):
+        self.sprite_manager = sprite_manager
 
     # Called by the scene 
-    def update_attack(self, layer, player, invaders, resources):
-        self.fire_enemy_missile(layer, player, invaders, resources)
+    def update_attack(self, layer, player, invaders):
+        self.fire_enemy_missile(layer, player, invaders)
 
-    def fire_enemy_missile(self, layer, player, invaders, resources):
+    def fire_enemy_missile(self, layer, player, invaders):
         rand = random.randint(0, 2)
         for missile_num in range(rand):
             missile_id = f"enemy_missile{missile_num}"
             if not self.is_enemy_missile_live(layer, missile_id):
-                missile = EnemyMissile(layer.width, layer.height, resources)
+                missile = self.sprite_manager.create_enemy_missile(layer.width, layer.height)
                 layer.add(missile, name=missile_id)
                 row, column = self.get_attacking_invader(player, invaders)
                 if row != -1 and column != -1:
