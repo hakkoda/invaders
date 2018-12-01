@@ -6,7 +6,8 @@ import cocos.euclid as eu
 class Invaders(object):
     def __init__(self, layer, animated_invader):
         self.sprite_width = 32
-        self.sprite_spacing = 32
+        #self.sprite_spacing = 32
+        self.sprite_spacing = 20
         self.columns = 11
         self.rows = 5
         self.sprites = self.init_sprites(layer, animated_invader)
@@ -75,7 +76,8 @@ class Invaders(object):
         return result
 
     def get_speed(self):
-        speed = 20
+        #speed = 20
+        speed = 10
         sprites_remaining = self.get_sprites_remaining()
         if sprites_remaining <= 2:
             speed = 400
@@ -101,10 +103,10 @@ class Invader(cocos.sprite.Sprite):
         self.direction = "RIGHT"
         self.cshape = None
         self.set_cshape()
-        #self.speed = 20
 
     def set_cshape(self):
-        self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 10)
+        #self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 10)
+        self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 6)
 
     def move(self, dt, right_limit, left_limit, speed):
         if self.direction == "RIGHT":
