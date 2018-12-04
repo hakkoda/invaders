@@ -8,6 +8,7 @@ class Resources(object):
         self.animated_invader = self.get_animated_invader()
         self.player = pyglet.resource.image("player_sprite.png")
         self.missile = pyglet.resource.image("missile.png")
+        self.barrier = pyglet.resource.image("barrier.png")
 
     def get_animated_invader(self):
         img = pyglet.resource.image("animated_invaders.png")

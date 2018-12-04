@@ -28,11 +28,12 @@ class Main_Layer(cocos.layer.Layer):
         self.invaders = self.sprite_manager.create_invaders(self)
         self.player = self.sprite_manager.create_player(self.width, self.height)
         self.add(self.player)
+        self.barriers = self.sprite_manager.create_barriers(self)
         self.schedule(self.loop)
 
     def loop(self, dt, *args, **kwargs):
         self.invaders.move_sprites(dt, self.player_attack_manager, self)
-        self.enemy_attack_manager.update_attack(self, self.player, self.invaders)
+        self.enemy_attack_manager.update_attack(self, self.player, self.invaders, dt)
 
     def on_joyaxis_motion(self, joystick, axis, value):
         if axis == "x":

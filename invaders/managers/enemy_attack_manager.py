@@ -4,22 +4,29 @@ import random
 class EnemyAttackManager(object):
     def __init__(self, sprite_manager):
         self.sprite_manager = sprite_manager
+        self.time_interval = 0
 
     # Called by the scene 
-    def update_attack(self, layer, player, invaders):
-        self.fire_enemy_missile(layer, player, invaders)
+    def update_attack(self, layer, player, invaders, dt):
+        self.fire_enemy_missile(layer, player, invaders, dt)
 
-    def fire_enemy_missile(self, layer, player, invaders):
-        rand = random.randint(0, 2)
+    def fire_enemy_missile(self, layer, player, invaders, dt):
+        rand = random.randint(0, 3)
+        self.time_interval += (dt * 10.0)
+        fire = False
+        if self.time_interval > rand:
+            fire = True
+            self.time_interval = 0
         for missile_num in range(rand):
             missile_id = f"enemy_missile{missile_num}"
             if not self.is_enemy_missile_live(layer, missile_id):
-                missile = self.sprite_manager.create_enemy_missile(layer.width, layer.height)
-                layer.add(missile, name=missile_id)
-                row, column = self.get_attacking_invader(player, invaders)
-                if row != -1 and column != -1:
-                    attacking_invader = invaders.sprites[row][column]
-                    missile.fire((attacking_invader.x, attacking_invader.y))
+                if fire:
+                    missile = self.sprite_manager.create_enemy_missile(layer.width, layer.height)
+                    layer.add(missile, name=missile_id)
+                    row, column = self.get_attacking_invader(player, invaders)
+                    if row != -1 and column != -1:
+                        attacking_invader = invaders.sprites[row][column]
+                        missile.fire((attacking_invader.x, attacking_invader.y))
             else:
                 self.clean_up(layer, missile_id)
 

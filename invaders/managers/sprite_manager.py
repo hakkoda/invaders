@@ -3,6 +3,7 @@ from invaders.resources.resources import Resources
 from invaders.sprites.invaders import Invaders
 from invaders.sprites.player import Player
 from invaders.sprites.missile import Missile
+from invaders.sprites.barrier import Barrier
 
 
 class SpriteManager(object):
@@ -29,4 +30,20 @@ class SpriteManager(object):
         missile_image = self.resources.missile
         missile = Missile(layer_width, layer_height, missile_image)
         return missile
+
+    def create_barriers(self, layer):
+        starting_position = layer.width / 8.0
+        distance_from_bottom = 80.0
+        spacing = layer.width / 4.0
+        barrier_image = self.resources.barrier
+        barrier1 = Barrier(starting_position, distance_from_bottom, barrier_image)
+        layer.add(barrier1)
+        barrier2 = Barrier(starting_position + (spacing), distance_from_bottom, barrier_image)
+        layer.add(barrier2)
+        barrier3 = Barrier(starting_position + (2.0*spacing), distance_from_bottom, barrier_image)
+        layer.add(barrier3)
+        barrier4 = Barrier(starting_position + (3.0*spacing), distance_from_bottom, barrier_image)
+        layer.add(barrier4)
+        return [ barrier1, barrier2, barrier3, barrier4 ]
+
 
