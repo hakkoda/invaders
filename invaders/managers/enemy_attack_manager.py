@@ -1,4 +1,5 @@
 import random
+import cocos.collision_model as cm
 
 
 class EnemyAttackManager(object):
@@ -39,6 +40,19 @@ class EnemyAttackManager(object):
                 layer.remove(missile_id)
                 missile = None
         return missile
+
+    # called by the barriers
+    def update_barrier_damage(self, layer, barrier_tile):
+        for missile_num in range(4):    # TODO: don't know how many missile are in play
+            missile_id = f"enemy_missile{missile_num}"
+            if self.is_enemy_missile_live(layer, missile_id):
+                missile = layer.get(missile_id)
+                missile.set_cshape()
+                if barrier_tile.visible == False:
+                    if cm.aa_rect_overlaps_circle(barrier_tile.cshape, missile.cshape):
+                        barrier_tile.visible = True
+                        missile.visible = False
+                        layer.remove(missile_id)
 
     def is_enemy_missile_live(self, layer, missile_id):
         return missile_id in layer.children_names

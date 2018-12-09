@@ -1,7 +1,6 @@
 import cocos
 from cocos.actions import *
 import cocos.collision_model as cm
-import cocos.euclid as eu
 
 
 class Barrier(cocos.sprite.Sprite):
@@ -10,6 +9,7 @@ class Barrier(cocos.sprite.Sprite):
         self.cshape = None
         self.x = x
         self.y = y
+        self.set_cshape()
         
     def set_cshape(self):
-        self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 10)
+        self.cshape = cm.AARectShape((self.x, self.y), 32, 32)

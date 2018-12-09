@@ -14,8 +14,8 @@ class Missile(cocos.sprite.Sprite):
         self.cshape = None
         
     def set_cshape(self):
-        #self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 15)
-        self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 10)
+        #self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 10)
+        self.cshape = cm.CircleShape(eu.Vector2(self.x, self.y), 5)
 
     def fire(self, start_position):
         self.x = start_position[0]
